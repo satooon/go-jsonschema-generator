@@ -3,7 +3,7 @@ package jsonschema
 import (
 	"testing"
 
-	. "launchpad.net/gocheck"
+	. "gopkg.in/check.v1"
 )
 
 func Test(t *testing.T) { TestingT(t) }
@@ -202,6 +202,49 @@ func (self *propertySuite) TestMarshal(c *C) {
 		"    \"$schema\": \"http://json-schema.org/schema#\",\n" +
 		"    \"type\": \"integer\"\n" +
 		"}"
+
+	json, err := j.Marshal()
+	c.Assert(err, IsNil)
+	c.Assert(string(json), Equals, expected)
+}
+
+type arr struct {
+	A string
+}
+type ExampleJSONStruct struct {
+	Base `json:"-" jschema:"schema"`
+	Foo  string
+	Id   int
+	Aray []arr
+}
+
+func (self *propertySuite) TestStruct(c *C) {
+	j := &Document{}
+	j.Read(&ExampleJSONStruct{
+		Foo: "Foo",
+		Id:  999,
+		Base: Base{
+			Id:          "/test",
+			Description: "test description",
+			Links: BaseLinks{
+				&BaseLink{
+					Title:       "test Title",
+					Description: "test Description",
+					Method:      "GET",
+					Href:        "http://127.0.0.1/test",
+					Rel:         "self",
+					// Schema:      BaseLinksSchema{},
+				},
+			},
+		},
+	})
+
+	expected := "{\n" +
+		"    \"$schema\": \"http://json-schema.org/schema#\",\n" +
+		"    \"type\": \"bool\"\n" +
+		"}"
+
+	c.Assert(j.String(), Equals, expected)
 
 	json, err := j.Marshal()
 	c.Assert(err, IsNil)
