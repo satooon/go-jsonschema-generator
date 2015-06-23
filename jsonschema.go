@@ -38,8 +38,17 @@ type Document struct {
 
 type Base struct {
 	Id          string    `json:"-" jschema:"id"`          // API URL
+	Name        string    `json:"-" jschema:"name"`        // Schema Name
 	Description string    `json:"-" jschema:"description"` // Description
 	Links       BaseLinks `json:"-" jschema:"links"`
+}
+
+func (b *Base) GetId() string {
+	return b.Id
+}
+
+func (b *Base) GetName() string {
+	return b.Name
 }
 
 type BaseLink struct {
